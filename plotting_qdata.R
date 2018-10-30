@@ -1,14 +1,13 @@
 library(pacman)
 p_load(stringr, rethinking, brms, dplyr, ggplot2, gridExtra, mvtnorm, rethinking, metafor, readxl, lme4, tidyverse, lubridate, groupdata2)
 
-#setwd("C:/Users/Bruger/Desktop/Bachelor/Data")
+
 setwd("C:/Users/Bruger/Desktop/Bachelor/bachelor-analysis")
 
 # --------- Importing + Plotting CSD
 
 
-csd = read_excel("csd.xlsx", sheet = 1, range = NULL, col_names = TRUE,
-                          col_types = NULL, na = "")
+csd = read_csv("csd.csv",  col_names = TRUE)
 
 #making a new column w/ days
 csd$day = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35)
@@ -22,8 +21,14 @@ csd$control = c(3,3,5,2,4,3,2,5,2,2,4,4,3,3,5,2,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
 
 View(csd)
 
+#deleting column
+csd = csd[-c(1)]
+
+
 #saving to csv
 write.csv(csd, file = "csd.csv")
+
+
 
 #plotting as a line 
 dev.off()
@@ -113,6 +118,7 @@ write.csv(isisum, file = "isisum.csv")
 part5 = read_excel("nicolai_output.xlsx", sheet = 5, range = NULL, col_names = TRUE,
                   col_types = NULL, na = "")
 
+
 View(part1)
 #renaming rows
 colnames(part1)[1] = "Dato"
@@ -128,11 +134,14 @@ colnames(part1)[8] = "Zolpidem"
 #deleting rows I don't need
 part1 = part1[-c(1),]
 
+write.csv(part1, file = "medpart1.csv")
 
 
 View(part2)
 #renaming rows
 colnames(part2)[1] = "Dato"
+
+write.csv(part2, file = "medpart2.csv")
 
 
 View(part3)
@@ -147,11 +156,14 @@ colnames(part3)[5] = "Hovedtotal"
 #deleting rows I don't need
 part3 = part3[-c(1),]
 
+write.csv(part3, file = "medpart3.csv")
 
 
 View(part4)
 #renaming rows
 colnames(part4)[1] = "Dato"
+
+write.csv(part4, file = "medpart4.csv")
 
 
 View(part5)
@@ -167,6 +179,7 @@ colnames(part5)[7] = "Hovedtotal"
 #deleting rows I don't need
 part5 = part5[-c(1),]
 
+write.csv(part5, file = "medpart5.csv")
 
 
 
@@ -182,6 +195,7 @@ colnames(part6)[5] = "Hovedtotal"
 #deleting rows I don't need
 part6 = part6[-c(1),]
 
+write.csv(part6, file = "medpart6.csv")
 
 
 View(part7)
@@ -200,6 +214,8 @@ colnames(part7)[10] = "Zopiclon"
 #deleting rows I don't need
 part7 = part7[-c(1),]
 
+write.csv(part7, file = "medpart7.csv")
+
 
 View(part8)
 #renaming rows
@@ -211,6 +227,8 @@ colnames(part8)[4] = "Zolpidem"
 
 #deleting rows I don't need
 part8 = part8[-c(1),]
+
+write.csv(part8, file = "medpart8.csv")
 
 
 
@@ -228,6 +246,10 @@ colnames(part9)[8] = "Zopiclon"
 #deleting rows I don't need
 part9 = part9[-c(1),]
 
+write.csv(part9, file = "medpart9.csv")
 
+
+
+# -------------- Plotting
 
 
