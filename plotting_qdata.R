@@ -1,8 +1,8 @@
 library(pacman)
 p_load(stringr, rethinking, brms, dplyr, ggplot2, gridExtra, mvtnorm, rethinking, metafor, readxl, lme4, tidyverse, lubridate, groupdata2)
 
-setwd("C:/Users/Bruger/Desktop/Bachelor/Data")
-
+#setwd("C:/Users/Bruger/Desktop/Bachelor/Data")
+setwd("C:/Users/Bruger/Desktop/Bachelor/bachelor-analysis")
 
 # --------- Importing + Plotting CSD
 
@@ -104,5 +104,130 @@ View(isisum)
 
 #saving to csv
 write.csv(isisum, file = "isisum.csv")
+
+
+
+# ------------------ Medicin data
+
+
+part5 = read_excel("nicolai_output.xlsx", sheet = 5, range = NULL, col_names = TRUE,
+                  col_types = NULL, na = "")
+
+View(part1)
+#renaming rows
+colnames(part1)[1] = "Dato"
+colnames(part1)[2] = "Citalopram"
+colnames(part1)[3] = "Atomoxetin"
+colnames(part1)[4] = "Clomipramin"
+colnames(part1)[5] = "Duloxetin"
+colnames(part1)[5] = "Mirtazapin"
+colnames(part1)[6] = "Oxazepam"
+colnames(part1)[7] = "Quetiapin"
+colnames(part1)[8] = "Zolpidem"
+
+#deleting rows I don't need
+part1 = part1[-c(1),]
+
+
+
+View(part2)
+#renaming rows
+colnames(part2)[1] = "Dato"
+
+
+View(part3)
+#renaming rows
+colnames(part3)[1] = "Dato"
+colnames(part3)[2] = "Oxazepam"
+colnames(part3)[3] = "Sertralin"
+colnames(part3)[4] = "Zolpidem"
+colnames(part3)[5] = "Hovedtotal"
+
+
+#deleting rows I don't need
+part3 = part3[-c(1),]
+
+
+
+View(part4)
+#renaming rows
+colnames(part4)[1] = "Dato"
+
+
+View(part5)
+#renaming rows
+colnames(part5)[1] = "Dato"
+colnames(part5)[2] = "Acamprosat"
+colnames(part5)[3] = "Lamotrigin"
+colnames(part5)[4] = "Quetiapin"
+colnames(part5)[5] = "Venlafaxin"
+colnames(part5)[6] = "Zopiclon"
+colnames(part5)[7] = "Hovedtotal"
+
+#deleting rows I don't need
+part5 = part5[-c(1),]
+
+
+
+
+View(part6)
+#renaming rows
+colnames(part6)[1] = "Dato"
+colnames(part6)[2] = "Duloxetin"
+colnames(part6)[3] = "Olanzapin"
+colnames(part6)[4] = "Oxazepam"
+colnames(part6)[5] = "Hovedtotal"
+
+
+#deleting rows I don't need
+part6 = part6[-c(1),]
+
+
+
+View(part7)
+#renaming rows
+colnames(part7)[1] = "Dato"
+colnames(part7)[2] = "Citalopram"
+colnames(part7)[3] = "Mirtazapin"
+colnames(part7)[4] = "Olanzapin"
+colnames(part7)[5] = "Oxazepam"
+colnames(part7)[6] = "Quetiapin"
+colnames(part7)[7] = "Risperidon"
+colnames(part7)[8] = "Sertralin"
+colnames(part7)[9] = "Zolpidem"
+colnames(part7)[10] = "Zopiclon"
+
+#deleting rows I don't need
+part7 = part7[-c(1),]
+
+
+View(part8)
+#renaming rows
+colnames(part8)[1] = "Dato"
+colnames(part8)[2] = "Nortriptylin"
+colnames(part8)[3] = "Venlafaxin"
+colnames(part8)[4] = "Zolpidem"
+
+
+#deleting rows I don't need
+part8 = part8[-c(1),]
+
+
+
+View(part9)
+#renaming rows
+colnames(part9)[1] = "Dato"
+colnames(part9)[2] = "Escitalopram"
+colnames(part9)[3] = "Lamotrigin"
+colnames(part9)[4] = "Lithium"
+colnames(part9)[5] = "Oxazepam"
+colnames(part9)[6] = "Quetiapin"
+colnames(part9)[7] = "Zolpidem"
+colnames(part9)[8] = "Zopiclon" 
+
+#deleting rows I don't need
+part9 = part9[-c(1),]
+
+
 
 
