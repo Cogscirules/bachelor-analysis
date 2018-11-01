@@ -1,7 +1,7 @@
 library(pacman)
 p_load(stringr, rethinking, brms, dplyr, ggplot2, gridExtra, mvtnorm, rethinking, metafor, readxl, lme4, tidyverse, lubridate, groupdata2)
 
-setwd("C:/Users/Bruger/Desktop/Bachelor/Bachelor-data-1/01/14-02-2018")
+setwd("C:/Users/Bruger/Desktop/Bachelor/bachelor-analysis/01/14-02-2018")
 
 df <-
   list.files(pattern = "*.csv") %>% 
@@ -17,11 +17,11 @@ for (i in df) {
              duration_in_sleep, duration_in_rem, duration_in_light, duration_in_deep, duration_sleep_onset, bedexit_count, 
              awakenings, bedexit_duration)
   #removing rows only containing NA's, leaving the ones which have values
-  ind = apply(i, 1, function(x) all(is.na(x)))
+  ind = apply(i, 1, function(x) all(is.na(x))) #not sure it works?
   i = i[ !ind, ]
   #making new columns
   i$date = c(as.Date("2018-02-14"))
-  i$participant = 01
+  i$participant = 09
   i = i[c(20,19,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18)]
   df9 = i
   
@@ -30,11 +30,18 @@ for (i in df) {
 
 
 
+full_01_df= Reduce(function(x, y) merge(x, y, all=TRUE), list(df1,df2,df3,df4,df5,df6,df7,df8,df9))
+View(full_01_df)
+
+#saving to csv
+write.csv(full_01_df, file = "full_01_df_uncleansed.csv")
+#saved in bachelor/bachelor-analysis folder
+
+
 full_02_df = Reduce(function(x, y) merge(x, y, all=TRUE), list(df2,df3,df4,df5,df6,df7,df8,df9,df1))
 View(full_02_df)
 
-full_01_df= Reduce(function(x, y) merge(x, y, all=TRUE), list(df2,df3,df4,df5,df6,df7,df8,df9,df1))
-View(full_01_df)
+#qualitative data, just messing around
 
 full_qd_df= Reduce(function(x, y) merge(x, y, all=TRUE), list(sleep_table1, sleep_table2, sleep_table3, sleep_table4, sleep_table5, sleep_table8))
 View(full_qd_df)
