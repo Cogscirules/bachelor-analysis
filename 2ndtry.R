@@ -1,28 +1,43 @@
 library(pacman)
 p_load(stringr, rethinking, brms, dplyr, ggplot2, gridExtra, mvtnorm, rethinking, metafor, readxl, lme4, tidyverse, lubridate, groupdata2)
 
-setwd("C:/Users/Bruger/Desktop/Bachelor/bachelor-analysis/01/14-02-2018")
+
+
+# ------------------------------------ BASE CODE BASED ON 1 PATIENT AND DATASET
+
+
+setwd("C:/Users/Bruger/Desktop/Bachelor/bachelor-analysis")
+
 
 df <-
-  list.files(pattern = "*.csv") %>% 
-  map_df(~read_csv(., col_types = cols(.default = "c")))
+  list.files(pattern = "*.csv") %>%  
+  map_df(~read_csv(., col_types = cols(.default = "c"))) 
+
+#Extracting the timestamp
+df1_1<-mutate(df,at=as.character(at))
+df1_2<-mutate(df,at=sapply(strsplit(df$at, split=' ', fixed=TRUE),function(x) (x[2])))
 
 
+
+#shows which values are not na
+#which(is.na(full_01_df$bedexit_count) == FALSE)
+#se række
+#full_01_df[45337,]
 
 #looping to make the data frame (exchange the namesin the loop for different dataframes)
-for (i in df) {
+for (i in df1_2) {
   #making the dataframe, removing a few columns not needed, and selecting the desired ones
-  i = df[ -c(1,2,3,4)]
-  i = select(df, hr, rr, act, duration_in_bed, avg_hr, avg_rr, avg_act, tossnturn_count, sleep_score, duration_awake, 
+  i = df1_2[ -c(1,2,3,4)]
+  i = select(df1_2, at, hr, rr, act, duration_in_bed, avg_hr, avg_rr, avg_act, tossnturn_count, sleep_score, duration_awake, 
              duration_in_sleep, duration_in_rem, duration_in_light, duration_in_deep, duration_sleep_onset, bedexit_count, 
              awakenings, bedexit_duration)
   #removing rows only containing NA's, leaving the ones which have values
-  ind = apply(i, 1, function(x) all(is.na(x))) #not sure it works?
+  ind = apply(i, 1, function(x) all(is.na(x)))
   i = i[ !ind, ]
   #making new columns
   i$date = c(as.Date("2018-02-14"))
-  i$participant = 09
-  i = i[c(20,19,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18)]
+  i$patient = 01
+  i = i[c(20,21,19,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18)]
   df9 = i
   
   
@@ -33,50 +48,23 @@ for (i in df) {
 full_01_df= Reduce(function(x, y) merge(x, y, all=TRUE), list(df1,df2,df3,df4,df5,df6,df7,df8,df9))
 View(full_01_df)
 
+full_01_df = full_01_df[c(1,21,3,4,5,6,2,7,8,9,10,11,12,13,14,15,16,17,18,19,20)]
+
 #saving to csv
-write.csv(full_01_df, file = "full_01_df_uncleansed.csv")
+write.csv(full_01_df, file = "full_01_df_cleansed.csv")
 #saved in bachelor/bachelor-analysis folder
 
 
-full_02_df = Reduce(function(x, y) merge(x, y, all=TRUE), list(df2,df3,df4,df5,df6,df7,df8,df9,df1))
-View(full_02_df)
-
-#qualitative data, just messing around
-
-full_qd_df= Reduce(function(x, y) merge(x, y, all=TRUE), list(sleep_table1, sleep_table2, sleep_table3, sleep_table4, sleep_table5, sleep_table8))
-View(full_qd_df)
-
-#deleting rows I don't need
-full_qd_df = full_qd_df[ -c(12:187),]
-
-#full_01qd_df = merge(full_qd_df, full_01_df)
-View(full_01qd_df)
 
 
-# ------------------------------ Playing
 
-importEmfitJSON <- function(filename, timezone) {
-  dataAll <- df(filename)
-  
-  calc_data <- as.data.frame(dataAll[["calc_data"]])
-  colnames(calc_data) <- c("timestamp","heart_rate","heart_rate_quality","breathing_rate", "breathing_rate_quality","activity")
-  
-  calc_data[,"timestamp"] <- as.POSIXct(origin="1970-01-01", tz="GMT", x=calc_data[,"timestamp"])
-  head(calc_data)
-  # transform times to local format (Ljubljana)
-  calc_data[,"timestamp"] <- as.POSIXct(format(calc_data[,"timestamp"], tz=timezone))
-  
-  return(calc_data)
-  
-}
+
 
 
 # ------------------------------ DOWNSAMPLING & SCALING
 
 #selecting the things I need, once more
-fulldf = select(full_01_df, participant, date, duration_in_bed, avg_hr, avg_rr, avg_act, tossnturn_count, sleep_score, duration_awake, 
-                          duration_in_sleep, duration_in_rem, duration_in_light, duration_in_deep, duration_sleep_onset, bedexit_count, 
-                          awakenings, bedexit_duration)
+
 
 columns <- sapply(fulldf, is.numeric)
 columns
@@ -86,89 +74,11 @@ columns
 View(fulldf)
 
 #making them numeric, apparently the were not
-fulldf= fulldf %>%
-  mutate_at(vars(duration_in_bed, 
-                 avg_hr, 
-                 avg_rr, 
-                 avg_act, 
-                 tossnturn_count, 
-                 sleep_score, 
-                 duration_awake, 
-                 duration_in_sleep, 
-                 duration_in_rem, 
-                 duration_in_light, 
-                 duration_in_deep, 
-                 duration_sleep_onset, 
-                 bedexit_count, 
-                 awakenings, 
-                 bedexit_duration), as.numeric)
-
-#downsampling, not sure I need to
-
-"fulldf1 = group_by(fulldf, participant, date, add = FALSE) %>%
-  mutate(duration_in_bed = mean(duration_in_bed, na.rm = T),
-  avg_hr = mean(avg_hr, na.rm = T), 
-  avg_rr = mean(avg_rr, na.rm = T), 
-  avg_act = mean(avg_act, na.rm = T), 
-  tossnturn_count = mean(tossnturn_count, na.rm = T), 
-  sleep_score = mean(sleep_score, na.rm = T), 
-  duration_awake = mean(duration_awake, na.rm = T), 
-  duration_in_sleep = mean(duration_in_sleep, na.rm = T), 
-  duration_in_rem = mean(duration_in_rem, na.rm = T), 
-  duration_in_light = mean(duration_in_light, na.rm = T), 
-  duration_in_deep = mean(duration_in_deep, na.rm = T), 
-  duration_sleep_onset = mean(duration_sleep_onset, na.rm = T), 
-  bedexit_count = mean(bedexit_count, na.rm = T), 
-  awakenings = mean(awakenings, na.rm = T), 
-  bedexit_duration = mean(bedexit_duration, na.rm = T)
-)"
-
-#scaling the variables which need scaling, placing them in new df
-
-newdf = group_by(fulldf, participant, date, add = FALSE) %>%
-  mutate(duration_in_bed = scale(duration_in_bed), 
-         avg_hr = scale(avg_hr), 
-         avg_rr = scale(avg_rr), 
-         avg_act = scale(avg_act), 
-         tossnturn_count = scale(tossnturn_count), 
-         sleep_score = scale(sleep_score), 
-         duration_awake = scale(duration_awake), 
-         duration_in_sleep = scale(duration_in_sleep),
-         duration_in_rem = scale(duration_in_rem),
-         duration_in_light = scale(duration_in_light),
-         duration_in_deep = scale(duration_in_deep),
-         duration_sleep_onset = scale(duration_sleep_onset),
-         bedexit_duration = scale(bedexit_duration)
-          )
-
-
-View(newdf)
-
-plot(newdf$duration_in_sleep, newdf$duration_in_rem)
-
-?unique
-
-
-
-# ---------------------------- OTHER DATASET
-
-#selecting the things I need, once more
-fulldf2 = select(full_02_df, participant, date, hr, rr, act, duration_in_bed, avg_hr, avg_rr, avg_act, tossnturn_count, sleep_score, duration_awake, 
-                duration_in_sleep, duration_in_rem, duration_in_light, duration_in_deep, duration_sleep_onset, bedexit_count, 
-                awakenings, bedexit_duration)
-
-columns <- sapply(fulldf2, is.numeric)
-columns
-
-
-
-View(fulldf)
-
-#making them numeric, apparently the were not
-fulldf2= fulldf2 %>%
-  mutate_at(vars(hr,
-                 rr,
-                 act,
+fulldf= full_01_df %>%
+  mutate_at(vars(at, 
+                 hr, 
+                 rr, 
+                 act, 
                  duration_in_bed, 
                  avg_hr, 
                  avg_rr, 
@@ -185,30 +95,16 @@ fulldf2= fulldf2 %>%
                  awakenings, 
                  bedexit_duration), as.numeric)
 
-#downsampling, not sure I need to
 
-"fulldf1 = group_by(fulldf, participant, date, add = FALSE) %>%
-mutate(duration_in_bed = mean(duration_in_bed, na.rm = T),
-avg_hr = mean(avg_hr, na.rm = T), 
-avg_rr = mean(avg_rr, na.rm = T), 
-avg_act = mean(avg_act, na.rm = T), 
-tossnturn_count = mean(tossnturn_count, na.rm = T), 
-sleep_score = mean(sleep_score, na.rm = T), 
-duration_awake = mean(duration_awake, na.rm = T), 
-duration_in_sleep = mean(duration_in_sleep, na.rm = T), 
-duration_in_rem = mean(duration_in_rem, na.rm = T), 
-duration_in_light = mean(duration_in_light, na.rm = T), 
-duration_in_deep = mean(duration_in_deep, na.rm = T), 
-duration_sleep_onset = mean(duration_sleep_onset, na.rm = T), 
-bedexit_count = mean(bedexit_count, na.rm = T), 
-awakenings = mean(awakenings, na.rm = T), 
-bedexit_duration = mean(bedexit_duration, na.rm = T)
-)"
 
 #scaling the variables which need scaling, placing them in new df
 
-newdf2 = group_by(fulldf2, participant, date, hr, rr, add = FALSE) %>%
-  mutate(act, duration_in_bed = scale(duration_in_bed), 
+scaleddf = group_by(fulldf, patient, add = FALSE) %>%
+  mutate(hr = scale(hr),
+         rr=scale(rr),
+         act=scale(act),
+         bedexit_duration = scale(bedexit_duration),
+         duration_in_bed = scale(duration_in_bed), 
          avg_hr = scale(avg_hr), 
          avg_rr = scale(avg_rr), 
          avg_act = scale(avg_act), 
@@ -220,10 +116,20 @@ newdf2 = group_by(fulldf2, participant, date, hr, rr, add = FALSE) %>%
          duration_in_light = scale(duration_in_light),
          duration_in_deep = scale(duration_in_deep),
          duration_sleep_onset = scale(duration_sleep_onset),
-         bedexit_duration = scale(bedexit_duration)
           )
 
-View(newdf2)
+
+View(newdf)
+
+plot(newdf$duration_in_sleep, newdf$duration_in_rem)
+
+?unique
+
+
+
+# ---------------------------- OTHER DATASETS
+
+
 
 # ---------------------------- MAKING MODELS
 
