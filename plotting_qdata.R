@@ -56,7 +56,7 @@ hads = hads[-c(6,7,12:51),]
 hads[1,2] = "18-01-2018"
 
 
-
+#changing date values to understandable dates
 hads[hads==51618] = "2018-05-16"
 
 
@@ -70,6 +70,27 @@ write.csv(hads, file = "hads.csv")
 
 hadssum = hads[ -c(3:16,20:33,37:50,54:67,71:84)]
 View(hadssum)
+
+#changing date values
+hadssum[hadssum==11818] = "2018-01-18"
+hadssum[hadssum==12418] = "2018-01-24"
+hadssum[hadssum==41118] = "2018-04-11"
+hadssum[hadssum==41918] = "2018-04-19"
+hadssum[hadssum==52318] = "2018-05-23"
+hadssum[hadssum==61218] = "2018-06-12"
+hadssum[hadssum==62018] = "2018-06-20"
+hadssum[hadssum==62118] = "2018-06-21"
+hadssum[hadssum==71618] = "2018-07-16"
+hadssum[hadssum==12518] = "2018-01-25"
+hadssum[hadssum==13118] = "2018-01-31"
+hadssum[hadssum==42518] = "2018-04-25"
+hadssum[hadssum==53018] = "2018-05-30"
+hadssum[hadssum==62818] = "2018-06-28"
+hadssum[hadssum==62518] = "2018-06-25"
+hadssum[hadssum==73118] = "2018-07-31"
+hadssum[hadssum==50318] = "2018-05-03"
+hadssum[hadssum==21318] = "2018-02-13"
+hadssum[hadssum==51618] = "2018-05-16"
 
 
 #saving to csv
@@ -86,6 +107,29 @@ hamd = hamd[-c(6,7,12:51),]
 View(hamd)
 
 
+#changing date values
+hamd[hamd==11818] = "2018-01-18"
+hamd[hamd==12418] = "2018-01-24"
+hamd[hamd==41118] = "2018-04-11"
+hamd[hamd==41918] = "2018-04-19"
+hamd[hamd==52318] = "2018-05-23"
+hamd[hamd==61218] = "2018-06-12"
+hamd[hamd==62018] = "2018-06-20"
+hamd[hamd==62118] = "2018-06-21"
+hamd[hamd==71618] = "2018-07-16"
+hamd[hamd==12518] = "2018-01-25"
+hamd[hamd==13118] = "2018-01-31"
+hamd[hamd==42518] = "2018-04-25"
+hamd[hamd==53018] = "2018-05-30"
+hamd[hamd==62818] = "2018-06-28"
+hamd[hamd==62518] = "2018-06-25"
+hamd[hamd==73118] = "2018-07-31"
+hamd[hamd==50318] = "2018-05-03"
+hamd[hamd==21318] = "2018-02-13"
+hamd[hamd==51618] = "2018-05-16"
+hamd[hamd==41018] = "2018-04-10"
+
+
 #saving to csv
 write.csv(hamd, file = "ham-d.csv")
 
@@ -94,6 +138,29 @@ write.csv(hamd, file = "ham-d.csv")
 
 hamdsum = hamd[ c(1,2,20:21, 42:46, 64:68, 86:89)]
 View(hamdsum)
+
+#changing date values
+hamdsum[hamdsum==11818] = "2018-01-18"
+hamdsum[hamdsum==12418] = "2018-01-24"
+hamdsum[hamdsum==41118] = "2018-04-11"
+hamdsum[hamdsum==41918] = "2018-04-19"
+hamdsum[hamdsum==52318] = "2018-05-23"
+hamdsum[hamdsum==61218] = "2018-06-12"
+hamdsum[hamdsum==62018] = "2018-06-20"
+hamdsum[hamdsum==62118] = "2018-06-21"
+hamdsum[hamdsum==71618] = "2018-07-16"
+hamdsum[hamdsum==12518] = "2018-01-25"
+hamdsum[hamdsum==13118] = "2018-01-31"
+hamdsum[hamdsum==42518] = "2018-04-25"
+hamdsum[hamdsum==53018] = "2018-05-30"
+hamdsum[hamdsum==62818] = "2018-06-28"
+hamdsum[hamdsum==62518] = "2018-06-25"
+hamdsum[hamdsum==73118] = "2018-07-31"
+hamdsum[hamdsum==50318] = "2018-05-03"
+hamdsum[hamdsum==21318] = "2018-02-13"
+hamdsum[hamdsum==51618] = "2018-05-16"
+hamdsum[hamdsum==41018] = "2018-04-10"
+
 
 
 #saving to csv
@@ -108,6 +175,32 @@ isi = isi[-c(6,7,12:51),]
 
 View(isi)
 
+
+#changing date values
+isi[isi==11818] = "2018-01-18"
+isi[isi==12418] = "2018-01-24"
+isi[isi==41118] = "2018-04-11"
+isi[isi==41918] = "2018-04-19"
+isi[isi==52318] = "2018-05-23"
+isi[isi==61218] = "2018-06-12"
+isi[isi==62018] = "2018-06-20"
+isi[isi==62118] = "2018-06-21"
+isi[isi==71618] = "2018-07-16"
+isi[isi==12518] = "2018-01-25"
+isi[isi==13118] = "2018-01-31"
+isi[isi==42518] = "2018-04-25"
+isi[isi==53018] = "2018-05-30"
+isi[isi==62818] = "2018-06-28"
+isi[isi==62518] = "2018-06-25"
+isi[isi==73118] = "2018-07-31"
+isi[isi==50318] = "2018-05-03"
+isi[isi==21318] = "2018-02-13"
+isi[isi==51618] = "2018-05-16"
+isi[isi==41018] = "2018-04-10"
+
+
+
+
 #saving to csv
 write.csv(isi, file = "isi.csv")
 
@@ -116,6 +209,29 @@ write.csv(isi, file = "isi.csv")
 
 isisum = isi[ -c(3:9, 12:18, 21:27, 30:36, 39:45)]
 View(isisum)
+
+isisum[isisum==11818] = "2018-01-18"
+isisum[isisum==12418] = "2018-01-24"
+isisum[isisum==41118] = "2018-04-11"
+isisum[isisum==41918] = "2018-04-19"
+isisum[isisum==52318] = "2018-05-23"
+isisum[isisum==61218] = "2018-06-12"
+isisum[isisum==62018] = "2018-06-20"
+isisum[isisum==62118] = "2018-06-21"
+isisum[isisum==71618] = "2018-07-16"
+isisum[isisum==12518] = "2018-01-25"
+isisum[isisum==13118] = "2018-01-31"
+isisum[isisum==42518] = "2018-04-25"
+isisum[isisum==53018] = "2018-05-30"
+isisum[isisum==62818] = "2018-06-28"
+isisum[isisum==62518] = "2018-06-25"
+isisum[isisum==73118] = "2018-07-31"
+isisum[isisum==50318] = "2018-05-03"
+isisum[isisum==21318] = "2018-02-13"
+isisum[isisum==51618] = "2018-05-16"
+isisum[isisum==41018] = "2018-04-10"
+
+
 
 
 #saving to csv
