@@ -131,7 +131,7 @@ plot(newdf$duration_in_sleep, newdf$duration_in_rem)
 
 
 
-setwd("C:/Users/Bruger/Desktop/Bachelor/bachelor-analysis/03/30-04-2018")
+setwd("C:/Users/Bruger/Desktop/Bachelor/bachelor-analysis/11/06-08-2018")
 
 
 df <-
@@ -160,36 +160,35 @@ for (i in df1_2) {
   ind = apply(i, 1, function(x) all(is.na(x)))
   i = i[ !ind, ]
   #making new columns
-  i$date = c(as.Date("2018-04-30"))
-  i$patient = 03
+  i$date = c(as.Date("2018-08-06"))
+  i$patient = 8
   i = i[c(20,21,19,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18)]
-  df24 = i
+  df13 = i
   
 }
 
 
 View(df1)
 
-full_03_df= Reduce(function(x, y) merge(x, y, all=TRUE), list(df3,df4,df5,df6,df7,df8,df9,df10,df11,df12,df13,df14,df15,df16,df17,df18,df19,df20,df21,df22,df23,df24,df1,df2))
-View(full_03_df)
+full_08_df= Reduce(function(x, y) merge(x, y, all=TRUE), list(df1,df2,df3,df4,df5,df6,df7,df8,df9,df10,df11,df12,df13))
+View(full_08_df)
 
-full_03_df = full_03_df[c(1,2,4,5,6,7,3,8,9,10,11,12,13,14,15,16,17,18,19,20,21)]
+full_08_df = full_08_df[c(1,2,4,5,6,7,3,8,9,10,11,12,13,14,15,16,17,18,19,20,21)]
 
 #saving to csv
-write.csv(full_03_df, file = "full_03_df_cleansed.csv")
+write.csv(full_08_df, file = "full_08_df_cleansed.csv")
 #saved in bachelor/bachelor-analysis folder
 
 
-#checking wether they are numeric
-columns <- sapply(full_03_df, is.numeric)
+#checking whether they are numeric
+columns <- sapply(full_04_df, is.numeric)
 columns
 
 
 
 #making them numeric, apparently the were not
-fulldf3= full_03_df %>%
-  mutate_at(vars(at, 
-                 hr, 
+fulldf8= full_08_df %>%
+  mutate_at(vars(hr, 
                  rr, 
                  act, 
                  duration_in_bed, 
@@ -212,7 +211,7 @@ fulldf3= full_03_df %>%
 
 #scaling the variables which need scaling, placing them in new df
 
-scaleddf3 = group_by(fulldf3, patient, add = FALSE) %>%
+scaleddf8 = group_by(fulldf8, patient, add = FALSE) %>%
   mutate(hr = scale(hr),
          rr=scale(rr),
          act=scale(act),
@@ -228,14 +227,18 @@ scaleddf3 = group_by(fulldf3, patient, add = FALSE) %>%
          duration_in_rem = scale(duration_in_rem),
          duration_in_light = scale(duration_in_light),
          duration_in_deep = scale(duration_in_deep),
-         duration_sleep_onset = scale(duration_sleep_onset), 
+         duration_sleep_onset = scale(duration_sleep_onset),  
          )
 
 
 
 
-quodf = merge(quodf, scaleddf3, all = TRUE)
+quodf = merge(quodf, scaleddf8, all = TRUE)
+
 View(quodf)
+
+write.csv(quodf, file = "statusquodf.csv")
+
 
 # ---------------------------- MAKING MODELS
 
