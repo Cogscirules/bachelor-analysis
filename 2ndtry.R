@@ -6,7 +6,7 @@ p_load(stringr, rethinking, brms, dplyr, ggplot2, gridExtra, mvtnorm, rethinking
 # ------------------------------------ BASE CODE BASED ON 1 PATIENT AND DATASET
 
 
-setwd("C:/Users/Bruger/Desktop/Bachelor/bachelor-analysis/01")
+setwd("C:/Users/Bruger/Desktop/Bachelor/bachelor-analysis")
 
 
 df <-
@@ -235,9 +235,34 @@ scaleddf8 = group_by(fulldf8, patient, add = FALSE) %>%
 
 quodf = merge(quodf, scaleddf8, all = TRUE)
 
-View(quodf)
-
+View(scaleddf1)
 write.csv(quodf, file = "statusquodf.csv")
+
+
+
+
+
+
+
+# ----------------------- MAKING OTHER DFs
+
+
+
+
+
+avg_duration_df = select(quodf, patient, date, at, avg_hr, avg_rr, avg_act, tossnturn_count, sleep_score, duration_awake, 
+           duration_in_sleep, duration_in_rem, duration_in_light, duration_in_deep, duration_sleep_onset, bedexit_count, 
+           awakenings, bedexit_duration)
+
+View(avg_duration_df)
+
+#delete rows with NA's, leaving only avarages and other descriptive data on their sleep
+avg_dur_df<-subset(avg_duration_df,!(is.na(avg_duration_df["avg_hr"]) | is.na(avg_duration_df["avg_rr"]) | is.na(avg_duration_df["avg_act"]) | is.na(avg_duration_df["tossnturn_count"]) | is.na(avg_duration_df["sleep_score"]) | is.na(avg_duration_df["duration_awake"]) | is.na(avg_duration_df["duration_in_sleep"]) | is.na(avg_duration_df["duration_in_rem"]) | is.na(avg_duration_df["duration_in_light"]) | is.na(avg_duration_df["duration_in_deep"]) | is.na(avg_duration_df["duration_sleep_onset"]) | is.na(avg_duration_df["bedexit_count"]) | is.na(avg_duration_df["awakenings"]) | is.na(avg_duration_df["bedexit_duration"])))
+
+View(avg_dur_df)
+
+write.csv(avg_dur_df, file = "avg_and_dur_data.csv")
+
 
 
 # ---------------------------- MAKING MODELS
