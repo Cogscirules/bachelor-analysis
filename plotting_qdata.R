@@ -24,6 +24,8 @@ View(csd)
 #deleting column
 csd = csd[-c(1)]
 
+?mutate
+
 
 #saving to csv
 write.csv(csd, file = "csd.csv")
@@ -43,11 +45,20 @@ ggplot(csd, aes(day,control)) +
 # -------------- Plotting hads
 #hospital depresion anxiety scale
 
+?gsub
 
-hads = read_excel("datasleep.xlsx", sheet = 5, range = NULL, col_names = TRUE,
-                 col_types = NULL, na = "")
+hads = read_csv("hads.csv",  col_names = TRUE)
+
 #deleting rows I don't need
 hads = hads[-c(6,7,12:51),]
+
+#changing values/dates
+hads[1,2] = "18-01-2018"
+
+
+
+hads[hads==51618] = "2018-05-16"
+
 
 View(hads)
 
@@ -251,5 +262,7 @@ write.csv(part9, file = "medpart9.csv")
 
 
 # -------------- Plotting
+
+
 
 
