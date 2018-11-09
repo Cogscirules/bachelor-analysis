@@ -246,16 +246,49 @@ tquo = tquo %>%
   mutate_at(vars(date), as.character)
 
 
+#1
 yquo = subset(tquo, patient == 1)
+yquo$date[yquo$date == "2018-02-14"] = "24"
 
-yquo = gsub("2018-01-19", "1", yquo)
-yquo$date[yquo$date == "2018-01-19"] <- "1"
+#2
+uquo = subset(tquo,patient ==2)
+uquo$date[uquo$date == "2018-01-26"] = "3"
+
+#3
+iquo = subset(tquo,patient==3)
+iquo$date[iquo$date == "2018-05-03"] = "29"
+
+#4
+oquo = subset(tquo,patient==4)
+oquo$date[oquo$date == "2018-05-31"] = "8"
+
+#5
+pquo = subset(tquo,patient==5)
+pquo$date[pquo$date == "2018-06-19"] = "9"
+
+#6
+aquo = subset(tquo,patient==6)
+aquo$date[aquo$date == "2018-07-24"] = "35"
+
+#7
+squo = subset(tquo,patient==7)
+squo$date[squo$date == "2018-06-25"] = "5"
+
+#8
+dquo = subset(tquo,patient==8)
+dquo$date[dquo$date == "2018-08-06"] = "22"
+
+final_emfit_df = merge(final_emfit_df, dquo, all = TRUE)
+
+View(final_emfit_df)
+
+write.csv(final_emfit_df, file = "final_emfit_df.csv")
 
 # ----------------------- MAKING OTHER DFs
 
 # Taking all avarages and other descriptive data to patients sleep and combiningthem in 1 dataframe
 
-avg_duration_df = select(quodf, patient, date, avg_hr, avg_rr, avg_act, tossnturn_count, sleep_score, duration_awake, 
+avg_duration_df = select(final_emfit_df, patient, date, avg_hr, avg_rr, avg_act, tossnturn_count, sleep_score, duration_awake, 
            duration_in_sleep, duration_in_rem, duration_in_light, duration_in_deep, duration_sleep_onset, bedexit_count, 
            awakenings, bedexit_duration)
 
