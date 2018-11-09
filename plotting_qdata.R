@@ -27,8 +27,33 @@ csd = csd[-c(1)]
 ?mutate
 
 
+
+csd_scaled = group_by(csd, add = FALSE) %>%
+  mutate(pat1 = scale(pat1),
+         pat2 = scale(pat2),
+         pat3 = scale(pat3),
+         pat5 = scale(pat5),
+         pat8 = scale(pat8),
+         pat9 = scale(pat9),
+         pat10 = scale(pat10),
+         pat11 = scale(pat11),
+         control = scale(control), 
+         ) 
+?group_by
+
+View(csd_scaled)
+
+csd_scaled = csd_scaled[-c(5)]
+
+colnames(csd_scaled)[5] <- "pat4"
+colnames(csd_scaled)[6] <- "pat5"
+colnames(csd_scaled)[7] <- "pat6"
+colnames(csd_scaled)[8] <- "pat7"
+colnames(csd_scaled)[9] <- "pat8"
+
 #saving to csv
 write.csv(csd, file = "csd.csv")
+write.csv(csd_scaled, file = "csd_scaled.csv")
 
 
 
@@ -62,6 +87,12 @@ hads[hads==51618] = "2018-05-16"
 
 View(hads)
 
+hads=hads[-c(2,3)]
+
+colnames(hads)[1] <- "patient"
+hads$lengthofstay = c(33,9,23,35,9,8,5,21,16)
+hads=hads[c(87,1:86)]
+
 #saving to csv
 write.csv(hads, file = "hads.csv")
 
@@ -69,6 +100,11 @@ write.csv(hads, file = "hads.csv")
 #deleting columns for another df
 
 hadssum = hads[ -c(3:16,20:33,37:50,54:67,71:84)]
+hadssum$lengthofstay = c(33,9,23,35,9,8,5,21,16)
+hadssum=hadssum[c(17,1:16)]
+colnames(hadssum)[2] ="patient"
+
+
 View(hadssum)
 
 #changing date values
@@ -104,6 +140,13 @@ hamd = read_excel("datasleep.xlsx", sheet = 3, range = NULL, col_names = TRUE,
 #deleting rows I don't need
 hamd = hamd[-c(6,7,12:51),]
 
+
+hamd$lengthofstay = c(33,9,23,35,9,8,5,21,16)
+hamd=hamd[c(100,1:99)]
+colnames(hamd)[2] ="patient"
+
+
+
 View(hamd)
 
 
@@ -136,7 +179,16 @@ write.csv(hamd, file = "ham-d.csv")
 
 #deleting columns for another df
 
+hamdsum = read_csv("ham-dsum.csv",  col_names = TRUE)
+
 hamdsum = hamd[ c(1,2,20:21, 42:46, 64:68, 86:89)]
+hamdsum=hamdsum[-c(1)]
+
+hamdsum$lengthofstay = c(33,9,23,35,9,8,5,21,16)
+hamdsum=hamdsum[c(19,1:18)]
+colnames(hamdsum)[2] ="patient"
+
+
 View(hamdsum)
 
 #changing date values
@@ -168,10 +220,19 @@ write.csv(hamdsum, file = "ham-dsum.csv")
 
 # ------------ Plotting ISI
 
-isi = read_excel("datasleep.xlsx", sheet = 11, range = NULL, col_names = TRUE,
-                  col_types = NULL, na = "")
+isi = read.csv("isi.csv")
+
+
+
 #deleting rows I don't need
-isi = isi[-c(6,7,12:51),]
+isi = isi[-c(6,7,12:5),]
+
+isi=isi[-c(2)]
+
+isi$lengthofstay = c(33,9,23,35,9,8,5,21,16)
+isi=isi[c(48, 1:47)]
+colnames(isi)[2] ="patient"
+
 
 View(isi)
 
@@ -208,6 +269,11 @@ write.csv(isi, file = "isi.csv")
 #deleting columns for another df
 
 isisum = isi[ -c(3:9, 12:18, 21:27, 30:36, 39:45)]
+
+isisum$lengthofstay = c(33,9,23,35,9,8,5,21,16)
+isisum=isisum[c(12, 1:11)]
+colnames(isisum)[2] ="patient"
+
 View(isisum)
 
 isisum[isisum==11818] = "2018-01-18"
@@ -600,6 +666,23 @@ part9[part9 == 43318] = "2018-08-06"
 write.csv(part9, file = "medpart9.csv")
 
 
+
+# lets try and combinet them!
+part1$Dato = as.Date()
+part2$patient = 2
+part3$patient = 3
+part5$patient = 4
+part6$patient = 5
+part7$patient = 6
+part8$patient = 7
+part9$patient = 8
+
+
+
+
+meddata = merge(part1, part2, all = TRUE)
+
+View(part1)
 
 # -------------- Plotting
 

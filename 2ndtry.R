@@ -235,22 +235,27 @@ scaleddf8 = group_by(fulldf8, patient, add = FALSE) %>%
 
 quodf = merge(quodf, scaleddf8, all = TRUE)
 
-View(scaleddf1)
-write.csv(quodf, file = "statusquodf.csv")
+quodf = read.csv("statusquodf.csv")
+quodf=quodf[-c(1)]
+
+#Realized I need to anonymize even more, making dates into days
+
+tquo = quodf
+
+tquo = tquo %>%
+  mutate_at(vars(date), as.character)
 
 
+yquo = subset(tquo, patient == 1)
 
-
-
-
+yquo = gsub("2018-01-19", "1", yquo)
+yquo$date[yquo$date == "2018-01-19"] <- "1"
 
 # ----------------------- MAKING OTHER DFs
 
+# Taking all avarages and other descriptive data to patients sleep and combiningthem in 1 dataframe
 
-
-
-
-avg_duration_df = select(quodf, patient, date, at, avg_hr, avg_rr, avg_act, tossnturn_count, sleep_score, duration_awake, 
+avg_duration_df = select(quodf, patient, date, avg_hr, avg_rr, avg_act, tossnturn_count, sleep_score, duration_awake, 
            duration_in_sleep, duration_in_rem, duration_in_light, duration_in_deep, duration_sleep_onset, bedexit_count, 
            awakenings, bedexit_duration)
 
@@ -264,6 +269,22 @@ View(avg_dur_df)
 write.csv(avg_dur_df, file = "avg_and_dur_data.csv")
 
 
+
+# Taking AVG_HR, AVG_RR, sleep class and CSD into a dataframe
+
+sleepscore_df = select(avg_dur_df, patient, date, avg_hr, avg_rr, sleep_score, duration_in_sleep, duration_in_rem, duration_in_light, duration_in_deep)
+View(sleepscore_df)
+sleepscore_df = merge(sleepscore_df, csd_scaled, all = TRUE)
+
+
+# Try for loop
+
+for (i in sleepscore_df) {
+ y = csd_scaled$pat1[1]
+ i = merge()
+  
+
+}
 
 # ---------------------------- MAKING MODELS
 
