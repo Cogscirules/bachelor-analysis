@@ -1,5 +1,5 @@
 library(pacman)
-p_load(stringr, rethinking, brms, dplyr, ggplot2, gridExtra, mvtnorm, rethinking, metafor, readxl, lme4, tidyverse, lubridate, groupdata2)
+p_load(stringr, rethinking, brms, dplyr, ggplot2, gridExtra, mvtnorm, rethinking, metafor, readxl, lme4, data.table, tidyverse, lubridate, groupdata2)
 
 
 
@@ -131,7 +131,7 @@ plot(newdf$duration_in_sleep, newdf$duration_in_rem)
 
 
 
-setwd("C:/Users/Bruger/Desktop/Bachelor/bachelor-analysis/11/06-08-2018")
+setwd("C:/Users/Bruger/Desktop/Bachelor/bachelor-analysis/control/13-10-2018")
 
 
 df <-
@@ -160,23 +160,23 @@ for (i in df1_2) {
   ind = apply(i, 1, function(x) all(is.na(x)))
   i = i[ !ind, ]
   #making new columns
-  i$date = c(as.Date("2018-08-06"))
-  i$patient = 8
+  i$date = c("2018-13-10")
+  i$patient = "control"
   i = i[c(20,21,19,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18)]
-  df13 = i
+  df16 = i
   
 }
 
 
-View(df1)
+View(df16)
 
-full_08_df= Reduce(function(x, y) merge(x, y, all=TRUE), list(df1,df2,df3,df4,df5,df6,df7,df8,df9,df10,df11,df12,df13))
-View(full_08_df)
+full_09_df= Reduce(function(x, y) merge(x, y, all=TRUE), list(df1,df2,df3,df4,df5,df6,df7,df8,df9,df10,df11,df12,df13,df14,df15,df16))
+View(full_09_df)
 
-full_08_df = full_08_df[c(1,2,4,5,6,7,3,8,9,10,11,12,13,14,15,16,17,18,19,20,21)]
+full_09_df = full_09_df[c(1,2,4,5,6,7,3,8,9,10,11,12,13,14,15,16,17,18,19,20,21)]
 
 #saving to csv
-write.csv(full_08_df, file = "full_08_df_cleansed.csv")
+write.csv(full_09_df, file = "full_09_df_cleansed.csv")
 #saved in bachelor/bachelor-analysis folder
 
 
@@ -187,7 +187,7 @@ columns
 
 
 #making them numeric, apparently the were not
-fulldf8= full_08_df %>%
+fulldf9= full_09_df %>%
   mutate_at(vars(hr, 
                  rr, 
                  act, 
@@ -211,7 +211,7 @@ fulldf8= full_08_df %>%
 
 #scaling the variables which need scaling, placing them in new df
 
-scaleddf8 = group_by(fulldf8, patient, add = FALSE) %>%
+scaleddf9 = group_by(fulldf9, patient, add = FALSE) %>%
   mutate(hr = scale(hr),
          rr=scale(rr),
          act=scale(act),
@@ -233,22 +233,22 @@ scaleddf8 = group_by(fulldf8, patient, add = FALSE) %>%
 
 
 
-quodf = merge(quodf, scaleddf8, all = TRUE)
+quodf = merge(quodf, scaleddf9, all = TRUE)
 
 quodf = read.csv("statusquodf.csv")
 quodf=quodf[-c(1)]
 
 #Realized I need to anonymize even more, making dates into days
 
-tquo = quodf
+fquo = quodf
 
-tquo = tquo %>%
+fquo = fquo %>%
   mutate_at(vars(date), as.character)
 
 
 #1
 yquo = subset(tquo, patient == 1)
-yquo$date[yquo$date == "2018-02-14"] = "24"
+yquo$date[yquo$date == "2018-02-14"] = "25"
 
 #2
 uquo = subset(tquo,patient ==2)
@@ -278,9 +278,16 @@ squo$date[squo$date == "2018-06-25"] = "5"
 dquo = subset(tquo,patient==8)
 dquo$date[dquo$date == "2018-08-06"] = "22"
 
-final_emfit_df = merge(final_emfit_df, dquo, all = TRUE)
+#9
+fquo = subset(fquo,patient== "control")
+fquo$date[fquo$date == "2018-13-10"] = "16"   
 
-View(final_emfit_df)
+
+View(fquo)
+
+final_emfit_dft = merge(final_emfit_dft, fquo, all = TRUE)
+
+final_emfit_df = final_emfit_dft
 
 write.csv(final_emfit_df, file = "final_emfit_df.csv")
 
@@ -306,8 +313,17 @@ write.csv(avg_dur_df, file = "avg_and_dur_data.csv")
 # Taking AVG_HR, AVG_RR, sleep class and CSD into a dataframe
 
 sleepscore_df = select(avg_dur_df, patient, date, avg_hr, avg_rr, sleep_score, duration_in_sleep, duration_in_rem, duration_in_light, duration_in_deep)
-View(sleepscore_df)
-sleepscore_df = merge(sleepscore_df, csd_scaled, all = TRUE)
+View(sleepscore1)
+
+
+
+sleepscore1 = subset(sleepscore_df, patient == "1")
+colnames(sleepscore1)[2] = "day"
+
+# it does sort of do what I want, BUT it doesn't sort pr day, and it cannot order the days. + many na's? Doens't make sense?
+sleepscore_df1 = merge(sleepscore1, csd_1, all = TRUE, sort = FALSE)
+
+csd_1 = select(csd_scaled, pat1, day)
 
 
 # Try for loop
