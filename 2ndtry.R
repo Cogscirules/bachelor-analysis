@@ -289,6 +289,10 @@ final_emfit_dft = merge(final_emfit_dft, fquo, all = TRUE)
 
 final_emfit_df = final_emfit_dft
 
+patient7 = final_emfit_df$patient == "7"
+View(patient7)
+View(final_emfit_df)
+
 write.csv(final_emfit_df, file = "final_emfit_df.csv")
 
 # ----------------------- MAKING OTHER DFs
@@ -306,34 +310,73 @@ avg_dur_df<-subset(avg_duration_df,!(is.na(avg_duration_df["avg_hr"]) | is.na(av
 
 View(avg_dur_df)
 
+
 write.csv(avg_dur_df, file = "avg_and_dur_data.csv")
 
 
 
 # Taking AVG_HR, AVG_RR, sleep class and CSD into a dataframe
 
+#selecting what I need
 sleepscore_df = select(avg_dur_df, patient, date, avg_hr, avg_rr, sleep_score, duration_in_sleep, duration_in_rem, duration_in_light, duration_in_deep)
-View(sleepscore1)
+View(sleepscore_df)
 
 
-
+#subsetting the patient i want first
 sleepscore1 = subset(sleepscore_df, patient == "1")
-colnames(sleepscore1)[2] = "day"
+sleepscorec = subset(sleepscore_df, patient == "control")
 
-# it does sort of do what I want, BUT it doesn't sort pr day, and it cannot order the days. + many na's? Doens't make sense?
-sleepscore_df1 = merge(sleepscore1, csd_1, all = TRUE, sort = FALSE)
-
+#selecting what I need from csd and chaning the column name so it makes sense in the big df
 csd_1 = select(csd_scaled, pat1, day)
+csd_c = select(csd_scaled, control, day)
+colnames(csd_c)[1]="csd"
+View(csd_7)
+
+#merging into a small df per patient
+sleepscore_dfc = merge(sleepscorec, csd_c, by = "day")
+View(sleepscore_dfc)
 
 
-# Try for loop
+#merging into a big df with all avg's and patients
+score = merge(score, sleepscore_dfc, all = TRUE)
+View(score)
 
-for (i in sleepscore_df) {
- y = csd_scaled$pat1[1]
- i = merge()
-  
+#writing
+write.csv(score, file = "avg_and_sleep_score.csv")
 
-}
+
+
+
+# Now we want the medication data too
+
+medpat1 = read_csv("medpart1.csv",  col_names = TRUE)
+
+View(medpat1)
+
+#X1 = days, but is not right since the dates are jumping, need to be fixed
+medpat1[40, 1] = NA
+colnames(medpat1)[1]="day"
+
+medpat1[is.na(medpat1)] <- 0
+
+
+#make a new column, collecting all the antidepressive mg's 
+medpat1$antidepressant <- (medpat1$Clomipramin+medpat1$Mirtazapin+medpat1$Citalopram)
+
+medpat1 = select(medpat1, day, Clomipramin, Mirtazapin, Citalopram, antidepressant, Zolpidem)
+
+medpat1$sleepmed = medpat1$Zolpidem
+
+
+#merging into a small df per patient
+medscore_df1 = merge(sleepscore1, medpat1, by = "day")
+View(medscore_df1)
+
+
+#merging into a big df with all data
+
+
+
 
 # ---------------------------- MAKING MODELS
 
