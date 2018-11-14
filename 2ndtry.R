@@ -293,6 +293,26 @@ patient7 = final_emfit_df$patient == "7"
 View(patient7)
 View(final_emfit_df)
 
+#renaming date to day
+colnames(final_emfit_df)[2] = "day" 
+
+
+#make stuff numeric
+
+final_emfit_df = final_emfit_df %>%
+  mutate_at(vars(day), as.numeric)
+
+
+#scale stuff
+
+final_emfit_df = group_by(final_emfit_df, patient, add = FALSE) %>%
+  mutate(day = scale(day))
+
+
+
+
+
+
 write.csv(final_emfit_df, file = "final_emfit_df.csv")
 
 # ----------------------- MAKING OTHER DFs
@@ -402,7 +422,7 @@ View(medscore_8)
 #merge all meddata
 
 medscore = full_join(medscore, medscore_8)
-View(medscore)
+View(score)
 
 
 write.csv(medscore, file = "all_medscore.csv")
@@ -411,6 +431,52 @@ write.csv(medscore, file = "all_medscore.csv")
 
 
 #merging into a big df with all data
+
+full_avg_df = merge(score, medscore, all = TRUE)
+
+#making NA in medication intro 0
+full_avg_df[is.na(full_avg_df)] <- 0
+
+
+#Scaling what I haven't scaled yet
+#First numeric
+
+
+#making them numeric, apparently the were not
+full_avg_df= full_avg_df %>%
+  mutate_at(vars(day,
+                 sleepmed,
+                 antidepressant), as.numeric)
+
+
+
+
+full_avg_df = group_by(full_avg_df, patient, add = FALSE) %>%
+  mutate(day = scale(day),
+         sleepmed = scale(sleepmed),
+         antidepressant = scale(antidepressant),   
+         )
+
+
+#Write dataframe
+
+write.csv(full_avg_df, file = "full_avg_med_df.csv")
+
+
+
+#NOW, the big data set.....
+View(full_avg_df)
+View(final_emfit_df)
+
+
+final_full_df = merge(full_avg_df, final_emfit_df, all = TRUE)
+
+View(final_full_df)
+
+#see which are not Na or NaN
+which(is.na(final_full_df$sleepmed) == FALSE)
+#se række
+final_full_df[4909,]
 
 
 
