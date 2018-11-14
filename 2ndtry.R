@@ -349,9 +349,9 @@ write.csv(score, file = "avg_and_sleep_score.csv")
 
 # Now we want the medication data too
 
-medpat1 = read_csv("medpart1.csv",  col_names = TRUE)
+medpat9 = read_csv("medpart9.csv",  col_names = TRUE)
 
-View(medpat1)
+View(medpat9)
 
 #X1 = days, but is not right since the dates are jumping, need to be fixed
 medpat1[40, 1] = NA
@@ -369,8 +369,45 @@ medpat1$sleepmed = medpat1$Zolpidem
 
 
 #merging into a small df per patient
-medscore_df1 = merge(sleepscore1, medpat1, by = "day")
-View(medscore_df1)
+medscore_1 = merge(sleepscore1, medpat1, by = "day")
+View(medscore_1)
+
+
+# Now we want the other medication data too
+
+View(medpat5)
+
+#X1 = days, but is not right since the dates are jumping, need to be fixed
+medpat9[44, 1] = NA
+colnames(medpat9)[1]="day"
+
+medpat9[is.na(medpat9)] <- 0
+
+#make a new column, collecting all the antidepressive mg's 
+medpat9$antidepressant <- (medpat9$Escitalopram)
+
+medpat9$sleepmed = medpat9$Zolpidem+medpat9$Zopiclon
+
+
+medpat9 = select(medpat9, day, sleepmed, antidepressant)
+
+
+#merging into a small df per patient
+medscore_8 = merge(sleepscore8, medpat9, by = "day")
+View(medscore_8)
+
+#No avg data for nr 7
+#No medicin data for nr. 4 + 7 during avg dates
+
+#merge all meddata
+
+medscore = full_join(medscore, medscore_8)
+View(medscore)
+
+
+write.csv(medscore, file = "all_medscore.csv")
+
+
 
 
 #merging into a big df with all data
