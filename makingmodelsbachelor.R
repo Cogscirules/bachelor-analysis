@@ -174,15 +174,33 @@ m11<- add_ic(m11, ic="waic")
 m12<- add_ic(m12, ic="waic")
 m13<- add_ic(m13, ic="waic")
 
-round(model_weights(m0, m1, m2, m3, m5, m5.1, m6, m7, m8, m9, m10, m11, m12, m13, ic = "waic"),3)
+#Try this with the original df too
+#model 8 is causing the trouble!!!
+round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, m8, m9, m10, m11, m12, m13, ic = "waic"),3)
+round(model_weights(m0, m2, ic = "waic"),3)
+round(model_weights(m0, m2, m3, ic = "waic"),3)
+round(model_weights(m0, m2, m3, m5, ic = "waic"),3)
+round(model_weights(m0, m2, m3, m5, m5.1, ic = "waic"),3)
+round(model_weights(m0, m2, m3, m5, m5.1, m6, ic = "waic"),3)
+round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, ic = "waic"),3)
+round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, m8, ic = "waic"),3)
+round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, m9, ic = "waic"),3)
+round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, m9, m10, ic = "waic"),3)
+round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, m9, m10, m11, ic = "waic"),3)
+round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, m9, m10, m11, m12, ic = "waic"),3)
+weights = round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, m9, m10, m11, m12, m13, ic = "waic"),3)
 
-compare_ic(m0, m1, m2, m3, m5, m5.1, m6, m7, m8, m9, m10, m11, m12, m13, ic = "waic")
+#lets test model 1 and 4 too --> They still don't work
+round(model_weights(m0, m1, m2, m3, m5, m5.1, m6, m7, m9, m10, m11, m12, m13, ic = "waic"),3)
+round(model_weights(m0, m4, m2, m3, m5, m5.1, m6, m7, m9, m10, m11, m12, m13, ic = "waic"),3)
 
-model_weights(m0, m1, m2, ic = "waic")
+comparison = compare_ic(m0, m2, m3, m5, m5.1, m6, m7, m9, m10, m11, m12, m13, ic = "waic")
+
+comparison
 
 
-WAIC(m0,m1,m2,m3,m4,m5, se = FALSE)
-
+WAIC(m0,m2,m3,m5, se = FALSE) 
+WAIC(m0, m2, m3, m5, m5.1, m6, m7, m9, m10, m11, m12, m13, se = FALSE)
 
 
 # ---------- Trying from the bottom
