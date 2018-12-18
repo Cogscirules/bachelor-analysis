@@ -549,6 +549,7 @@ write.csv(malefull, file = "malefull.csv")
 write.csv(malefullbed, file = "malefullbed.csv")
 write.csv(femfull, file = "femfull.csv")
 write.csv(femfullbed, file = "femfullbed.csv")
+write.csv(DF, file = "DF.csv")
 
 
 
