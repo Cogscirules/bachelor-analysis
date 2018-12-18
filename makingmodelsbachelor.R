@@ -7,11 +7,29 @@ setwd("C:/Users/Bruger/Desktop/Bachelor/bachelor-analysis")
 finalfull = read_csv("final_full_df.csv",  col_names = TRUE)
 finalfull = finalfull[-c(1)]
 
-finalavg = read_csv("full_avg_med_df.csv",  col_names = TRUE)
+finalavg = read_csv("finalavg.csv",  col_names = TRUE)
 finalavg = finalavg[-c(1)]
+
+#finalavg = read_csv("final_avg_no_na.csv",  col_names = TRUE)
+#finalavg = finalavg[-c(1)]
 
 finalavg_inbeddur = read_csv("finalavg_inbeddur.csv", col_names = TRUE)
 finalavg_inbeddur = finalavg_inbeddur[-c(1)]
+
+# ---------------------------- EXTRACTING INFORMATION
+
+#age 
+mean
+min
+max(finalavg$age)
+
+#5 women
+#3 male
+
+
+
+
+
 
 # ---------------------------- MAKING MODELS
 
@@ -21,133 +39,152 @@ finalavg_inbeddur = finalavg_inbeddur[-c(1)]
 
 #------- BASIC MODELS
 
+#sleep score as predicted by days
 m0 <- brms::brm(sleep_score ~ 1 + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2)
 summary(m0)
 pp_check(m0)
 plot(marginal_effects(m0), points = T)
 
 
-# duration in bed is predicted by amount of days they are there (because no rows w/ sleepscore include duration in bed)
 
-m1 <- brms::brm(duration_in_bed ~ 1 + (1|day), data = finalavg_inbeddur, family = gaussian, chains = 2, cores = 2)
+# sleep score as predicted by consensus sleep diary
+m1 <- brms::brm(sleep_score ~ 1 + csd + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
 summary(m1)
 pp_check(m1)
 plot(marginal_effects(m1), points = T)
 
 
 
+# ------ INTERACTION MODELS
 
-# sleepscore as impacted by medication sleep and antidepr pr day
-
-m2 <- brms::brm(sleep_score ~ 1 + sleepmed + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
+# sleep score as predicted by interaction between duration in sleep and sleepmed
+m2 <- brms::brm(sleep_score ~ 1 + duration_in_sleep * sleepmed + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
 summary(m2)
 pp_check(m2)
 plot(marginal_effects(m2), points = T)
 
 
 
-#the model below doesn't seem to check out
-m3 <- brms::brm(sleep_score ~ 1 + antidepressant + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
+# sleep score as predicted by interaction between duration in sleep and antidepressant
+m3 <- brms::brm(bf(sleep_score ~ 1 + duration_in_sleep * antidepressant + (1|day)), data = finalavg, family = gaussian, chains = 2, cores = 2) 
 summary(m3)
 pp_check(m3)
 plot(marginal_effects(m3), points = T)
 
 
-# amount of time out of bed improves sleep
-m4 <- brms::brm(sleep_score ~ 1 + bedexit_duration + (1|day), data = finalfull, family = gaussian, chains = 2, cores = 2) 
+# sleep score as predicted by Interaction with both medications
+m4<- brms::brm(sleep_score ~ 1 + duration_in_sleep * sleepmed * antidepressant + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
 summary(m4)
 pp_check(m4)
 plot(marginal_effects(m4), points = T)
 
 
-# Patients believe they sleep worse than they do
-m5 <- brms::brm(sleep_score ~ 1 + csd + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
+
+# Sleep score as predicted by interaction between both medications
+m5<- brms::brm(sleep_score ~ 1 + sleepmed * antidepressant + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
 summary(m5)
 pp_check(m5)
 plot(marginal_effects(m5), points = T)
 
-# sleepscore and hr and rr
-m5.1 <- brms::brm(sleep_score ~ 1 + avg_hr + avg_rr + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
-summary(m5.1)
-pp_check(m5.1)
-plot(marginal_effects(m5.1), points = T)
 
 
-# ------ INTERACTION MODELS
-
-#interaction between duration in sleep and sleepmed
-m6 <- brms::brm(sleep_score ~ 1 + duration_in_sleep * sleepmed + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
+#Sleep score as predicted by interaction between duration in sleep and rem
+m6<- brms::brm(sleep_score ~ 1 + duration_in_sleep * duration_in_rem + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
 summary(m6)
 pp_check(m6)
 plot(marginal_effects(m6), points = T)
 
-#interaction between duration in sleep and antidepressant
-m7 <- brms::brm(bf(sleep_score ~ 1 + duration_in_sleep * antidepressant + (1|day)), data = finalavg, family = gaussian, chains = 2, cores = 2) 
+#Sleep score as predicted by duration in sleep and duration in deep
+m7<- brms::brm(sleep_score ~ 1 + duration_in_sleep * duration_in_deep + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
 summary(m7)
 pp_check(m7)
 plot(marginal_effects(m7), points = T)
 
 
-
-#interaction between sleepscore and RR
-m8 <- brms::brm(sleep_score ~ 1 + duration_in_sleep * avg_hr + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
+#Sleep score as predicted by interaction between sleep med and duration in deep
+m8<- brms::brm(sleep_score ~ 1 + sleepmed * duration_in_deep + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
 summary(m8)
 pp_check(m8)
 plot(marginal_effects(m8), points = T)
 
-m9 <- brms::brm(sleep_score ~ 1 + duration_in_sleep * avg_rr + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
+#sleep score as predicted by interaction between sleep med and rem
+m9<- brms::brm(sleep_score ~ 1 + sleepmed * duration_in_rem + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
 summary(m9)
 pp_check(m9)
 plot(marginal_effects(m9), points = T)
 
-m10 <- brms::brm(sleep_score ~ 1 + duration_in_sleep * avg_rr * avg_hr + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
+
+#sleep score as predicted by interaction between antidepressant and deep
+m10<- brms::brm(sleep_score ~ 1 + antidepressant * duration_in_deep + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
 summary(m10)
 pp_check(m10)
 plot(marginal_effects(m10), points = T)
 
-
-# Interaction with both medications
-m11<- brms::brm(sleep_score ~ 1 + duration_in_sleep * sleepmed * antidepressant + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
+#sleep score as predicted by interaction between antipressant and rem
+m11<- brms::brm(sleep_score ~ 1 + antidepressant * duration_in_rem + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
 summary(m11)
 pp_check(m11)
 plot(marginal_effects(m11), points = T)
 
 
-
-# Make above models without duration in sleep
-
-m12 <- brms::brm(sleep_score ~ 1 + avg_rr * avg_hr + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
-summary(m12)
-pp_check(m12)
-plot(marginal_effects(m12), points = T)
-
-m13<- brms::brm(sleep_score ~ 1 + sleepmed * antidepressant + (1|day), data = finalavg, family = gaussian, chains = 2, cores = 2) 
-summary(m13)
-pp_check(m13)
-plot(marginal_effects(m13), points = T)
+# ------------- USING NO NA DF FOR ASSESSING WEIGHT
 
 
 
+#Intercept model --> sleep score as predicted by how many days they are in hospital
+# mu = alpha(sleepscore) + beta(days)
+#This can also be duration in sleep, deep, light and rem
 
-#Make a model about respiration rate and sleep in REM, Light and Deep sleep
+#------- BASIC MODELS
+
+#sleep score as predicted by days
+mm0 <- brms::brm(sleep_score ~ 1 + (1|day), data = DF, family = gaussian, chains = 2, cores = 2)
+
+# sleep score as predicted by consensus sleep diary
+mm1 <- brms::brm(sleep_score ~ 1 + csd + (1|day), data = DF, family = gaussian, chains = 2, cores = 2) 
+
+# ------ INTERACTION MODELS
+
+# sleep score as predicted by interaction between duration in sleep and sleepmed
+mm2 <- brms::brm(sleep_score ~ 1 + duration_in_sleep * sleepmed + (1|day), data = DF, family = gaussian, chains = 2, cores = 2) 
+
+# sleep score as predicted by interaction between duration in sleep and antidepressant
+mm3 <- brms::brm(bf(sleep_score ~ 1 + duration_in_sleep * antidepressant + (1|day)), data = DF, family = gaussian, chains = 2, cores = 2) 
 
 
+# sleep score as predicted by Interaction with both medications
+mm4<- brms::brm(sleep_score ~ 1 + duration_in_sleep * sleepmed * antidepressant + (1|day), data = DF, family = gaussian, chains = 2, cores = 2) 
 
 
-# fit model
-m0.1 <- map2stan(
-  alist(
-    sleep_score ~ dnorm( mu , sigma ) ,
-    mu <- a + bD * day ,
-    a ~ dnorm( 0 , 1 ) ,
-    bD ~ dnorm( 0 , 1 ) ,
-    sigma ~ dunif( 0 , 1 )
-  ) , data = finalavg, chains = 2, cores = 2, iter = 1000, warmup = 500)
-precis(m0.1)
+# Sleep score as predicted by interaction between both medications
+mm5<- brms::brm(sleep_score ~ 1 + sleepmed * antidepressant + (1|day), data = DF, family = gaussian, chains = 2, cores = 2) 
 
 
+#Sleep score as predicted by interaction between duration in sleep and rem
+mm6<- brms::brm(sleep_score ~ 1 + duration_in_sleep * duration_in_rem + (1|day), data = DF, family = gaussian, chains = 2, cores = 2) 
 
-finalavg = as.data.frame(finalavg)
+
+#Sleep score as predicted by duration in sleep and duration in deep
+mm7<- brms::brm(sleep_score ~ 1 + duration_in_sleep * duration_in_deep + (1|day), data = DF, family = gaussian, chains = 2, cores = 2) 
+
+
+#Sleep score as predicted by interaction between sleep med and duration in deep
+mm8<- brms::brm(sleep_score ~ 1 + sleepmed * duration_in_deep + (1|day), data = DF, family = gaussian, chains = 2, cores = 2) 
+
+
+#sleep score as predicted by interaction between sleep med and rem
+mm9<- brms::brm(sleep_score ~ 1 + sleepmed * duration_in_rem + (1|day), data = DF, family = gaussian, chains = 2, cores = 2) 
+
+
+#sleep score as predicted by interaction between antidepressant and deep
+mm10<- brms::brm(sleep_score ~ 1 + antidepressant * duration_in_deep + (1|day), data = DF, family = gaussian, chains = 2, cores = 2) 
+
+
+#sleep score as predicted by interaction between antipressant and rem
+mm11<- brms::brm(sleep_score ~ 1 + antidepressant * duration_in_rem + (1|day), data = DF, family = gaussian, chains = 2, cores = 2) 
+
+
+#finalavg = as.data.frame(finalavg)
 
 
 # ------------- INTERACTION MODELS
@@ -155,40 +192,33 @@ finalavg = as.data.frame(finalavg)
 
 
 
-
 #Assessing model quality
 
-m0<-add_ic(m0,ic="waic")
-m1<- add_ic(m1, ic="waic")
-m2<- add_ic(m2, ic="waic")
-m3<- add_ic(m3, ic="waic")
-m4<- add_ic(m4, ic="waic")
-m5<- add_ic(m5, ic="waic")
-m5.1<- add_ic(m5.1, ic="waic")
-m6<- add_ic(m6, ic="waic")
-m7<- add_ic(m7, ic="waic")
-m8<- add_ic(m8, ic="waic")
-m9<- add_ic(m9, ic="waic")
-m10<- add_ic(m10, ic="waic")
-m11<- add_ic(m11, ic="waic")
-m12<- add_ic(m12, ic="waic")
-m13<- add_ic(m13, ic="waic")
+mm0<-add_ic(mm0,ic="waic")
+mm1<- add_ic(mm1, ic="waic")
+mm2<- add_ic(mm2, ic="waic")
+mm3<- add_ic(mm3, ic="waic")
+mm4<- add_ic(mm4, ic="waic")
+mm5<- add_ic(mm5, ic="waic")
+mm6<- add_ic(mm6, ic="waic")
+mm7<- add_ic(mm7, ic="waic")
+mm8<- add_ic(mm8, ic="waic")
+mm9<- add_ic(mm9, ic="waic")
+mm10<- add_ic(mm10, ic="waic")
+mm11<- add_ic(mm11, ic="waic")
 
-#Try this with the original df too
-#model 8 is causing the trouble!!!
-round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, m8, m9, m10, m11, m12, m13, ic = "waic"),3)
-round(model_weights(m0, m2, ic = "waic"),3)
-round(model_weights(m0, m2, m3, ic = "waic"),3)
-round(model_weights(m0, m2, m3, m5, ic = "waic"),3)
-round(model_weights(m0, m2, m3, m5, m5.1, ic = "waic"),3)
-round(model_weights(m0, m2, m3, m5, m5.1, m6, ic = "waic"),3)
-round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, ic = "waic"),3)
-round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, m8, ic = "waic"),3)
-round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, m9, ic = "waic"),3)
-round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, m9, m10, ic = "waic"),3)
-round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, m9, m10, m11, ic = "waic"),3)
-round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, m9, m10, m11, m12, ic = "waic"),3)
-weights = round(model_weights(m0, m2, m3, m5, m5.1, m6, m7, m9, m10, m11, m12, m13, ic = "waic"),3)
+
+
+
+
+
+
+#Try this with the original df
+round(model_weights(m0, m1, m2, m3, m5, m6, m7, m8, m9, m10, m11, ic = "waic"),3)
+
+
+
+weights = round(model_weights(m0, m1, m2, m3, m4,m5, m6, m7, m9, m10, m11, ic = "waic"),3)
 
 #lets test model 1 and 4 too --> They still don't work
 round(model_weights(m0, m1, m2, m3, m5, m5.1, m6, m7, m9, m10, m11, m12, m13, ic = "waic"),3)
@@ -203,10 +233,5 @@ WAIC(m0,m2,m3,m5, se = FALSE)
 WAIC(m0, m2, m3, m5, m5.1, m6, m7, m9, m10, m11, m12, m13, se = FALSE)
 
 
-# ---------- Trying from the bottom
 
-library(rethinking)
-
-
-?brms
 

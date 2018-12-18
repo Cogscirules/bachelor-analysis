@@ -320,16 +320,19 @@ write.csv(final_emfit_df, file = "final_emfit_df.csv")
 
 # ----------------------- MAKING OTHER DFs
 
+
+final_emfit_df = read_csv("final_emfit_df.csv", col_names = TRUE)
+
 # Taking all avarages and other descriptive data to patients sleep and combiningthem in 1 dataframe
 
-avg_duration_df = select(final_emfit_df, patient, date, avg_hr, avg_rr, avg_act, tossnturn_count, sleep_score, duration_awake, 
-           duration_in_sleep, duration_in_rem, duration_in_light, duration_in_deep, duration_sleep_onset, bedexit_count, 
+avg_duration_df = select(final_emfit_df, patient, day, avg_hr, avg_rr, avg_act, tossnturn_count, sleep_score, duration_awake, 
+           duration_in_sleep, duration_in_bed, duration_in_rem, duration_in_light, duration_in_deep, duration_sleep_onset, bedexit_count, 
            awakenings, bedexit_duration)
 
 View(avg_duration_df)
 
 #delete rows with NA's, leaving only avarages and other descriptive data on their sleep
-avg_dur_df<-subset(avg_duration_df,!(is.na(avg_duration_df["avg_hr"]) | is.na(avg_duration_df["avg_rr"]) | is.na(avg_duration_df["avg_act"]) | is.na(avg_duration_df["tossnturn_count"]) | is.na(avg_duration_df["sleep_score"]) | is.na(avg_duration_df["duration_awake"]) | is.na(avg_duration_df["duration_in_sleep"]) | is.na(avg_duration_df["duration_in_rem"]) | is.na(avg_duration_df["duration_in_light"]) | is.na(avg_duration_df["duration_in_deep"]) | is.na(avg_duration_df["duration_sleep_onset"]) | is.na(avg_duration_df["bedexit_count"]) | is.na(avg_duration_df["awakenings"]) | is.na(avg_duration_df["bedexit_duration"])))
+avg_dur_df<-subset(avg_duration_df,!(is.na(avg_duration_df["avg_hr"]) | is.na(avg_duration_df["avg_rr"]) | is.na(avg_duration_df["avg_act"]) | is.na(avg_duration_df["tossnturn_count"]) | is.na(avg_duration_df["sleep_score"]) | is.na(avg_duration_df["duration_awake"]) | is.na(avg_duration_df["duration_in_sleep"]) | is.na(avg_duration_df["duration_in_rem"]) | is.na(avg_duration_df["duration_in_bed"]) | is.na(avg_duration_df["duration_in_light"]) | is.na(avg_duration_df["duration_in_deep"]) | is.na(avg_duration_df["duration_sleep_onset"]) | is.na(avg_duration_df["bedexit_count"]) | is.na(avg_duration_df["awakenings"]) | is.na(avg_duration_df["bedexit_duration"])))
 
 View(avg_dur_df)
 
@@ -431,8 +434,6 @@ View(score)
 write.csv(medscore, file = "all_medscore.csv")
 
 
-
-
 #merging into a big df with all data
 
 full_avg_df = merge(score, medscore, all = TRUE)
@@ -441,8 +442,43 @@ full_avg_df = merge(score, medscore, all = TRUE)
 full_avg_df[is.na(full_avg_df)] <- 0
 
 
+#add gender and age
+
+patient = 9
+age = 36
+gender = 1
+
+patient = data.frame(c(1,2,3,4,5,6,7,8,9))
+colnames(patient)[1] <- "patient"
+
+age = data.frame(c(24,53,58,46,19,36,67,35,36))
+colnames(age)[1] <- "age"
+
+gender = data.frame(c(1,2,2,2,1,1,2,1,1))
+colnames(gender)[1] <- "gender"
+
+f = c(patient, age, gender)
+
+finalavg_inbeddur = merge(finalavg_inbeddur, f, by = "patient")
+finalavg <- finalavg[c(1,13,14,2:12)]
+
+finalavg_inbeddur = finalavg_inbeddur[c(1,14,15,2:13)]
+
 #Scaling what I haven't scaled yet
 #First numeric
+
+finalavg_inbeddur= finalavg_inbeddur %>%
+  mutate_at(vars(gender,
+                 age), as.numeric)
+
+
+
+#makes it nan?
+finalavg = group_by(finalavg, patient, add = FALSE) %>%
+  mutate(age = scale(age),
+         gender = scale(gender))
+
+
 
 
 #making them numeric, apparently the were not
@@ -465,6 +501,18 @@ full_avg_df = group_by(full_avg_df, patient, add = FALSE) %>%
 
 write.csv(full_avg_df, file = "full_avg_med_df.csv")
 
+inbeddur = select(avg_dur_df, day, patient, duration_in_bed)
+View(inbeddur)
+
+
+inbeddur = merge(finalavg, inbeddur, all = TRUE)
+View(finalavg_inbeddur)
+
+
+inbeddur<-subset(inbeddur,!(is.na(inbeddur["avg_hr"]) | is.na(inbeddur["avg_rr"]) | is.na(inbeddur["sleep_score"]) | is.na(inbeddur["duration_in_sleep"]) | is.na(inbeddur["duration_in_rem"]) | is.na(inbeddur["duration_in_bed"]) | is.na(inbeddur["duration_in_light"]) | is.na(inbeddur["duration_in_deep"])))
+
+
+write.csv(finalavg, file = "finalavg.csv")
 
 
 #NOW, the big data set.....
@@ -474,6 +522,9 @@ View(final_emfit_df)
 
 final_full_df = merge(full_avg_df, final_emfit_df, all = TRUE)
 
+
+write.csv(finalavg, file = "final_avg_no_na.csv")
+
 View(final_full_df)
 
 
@@ -482,3 +533,43 @@ which(is.na(final_full_df$sleepmed) == FALSE)
 #se række
 final_full_df[4909,]
 
+
+
+
+#dataframe for male
+malefullbed = finalavg_inbeddur[which(finalavg_inbeddur$gender == 2),]
+View(malefull)
+
+#df for female
+femfullbed = finalavg_inbeddur[which(finalavg_inbeddur$gender == 1),]
+View(femfull)
+
+
+write.csv(malefull, file = "malefull.csv")
+write.csv(malefullbed, file = "malefullbed.csv")
+write.csv(femfull, file = "femfull.csv")
+write.csv(femfullbed, file = "femfullbed.csv")
+
+
+
+
+
+
+
+
+
+#need to eliminate control and NA
+
+DF = finalavg
+
+DF[ ! ( ( DF$patient == "control" ) ) ]
+
+cond2 <- DF$patient == "control"
+
+DF <- DF[!cond2,]
+
+View(DF)
+
+DF <- subset(DF,!(is.na(DF["sleepmed"]) | is.na(DF["antidepressant"]) ) )
+
+finalavg = DF
