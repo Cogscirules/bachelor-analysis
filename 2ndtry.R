@@ -9,7 +9,7 @@ p_load(stringr, rethinking, brms, dplyr, ggplot2, gridExtra, mvtnorm, rethinking
 # ------------------------------------ BASE CODE BASED ON 1 PATIENT AND DATASET
 
 
-setwd("C:/Users/Bruger/Desktop/Bachelor/bachelor-analysis")
+setwd("C:/Users/Bruger/Desktop/Bachelor/bachelor-analysis/01/14-02-2018")
 
 
 df <-
@@ -38,18 +38,18 @@ for (i in df1_2) {
   ind = apply(i, 1, function(x) all(is.na(x)))
   i = i[ !ind, ]
   #making new columns
-  i$date = c(as.Date("2018-02-14"))
+  i$day = 26
   i$patient = 01
   i = i[c(20,21,19,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18)]
-  df9 = i
+  df8 = i
   
   
 }
 
+View(df1)
 
-
-full_01_df= Reduce(function(x, y) merge(x, y, all=TRUE), list(df1,df2,df3,df4,df5,df6,df7,df8,df9))
-View(full_01_df)
+visualize_pat1 = Reduce(function(x, y) merge(x, y, all=TRUE), list(df1,df2,df3,df4,df5,df6,df7,df8))
+View(visualize_pat1)
 
 full_01_df = full_01_df[c(1,21,3,4,5,6,2,7,8,9,10,11,12,13,14,15,16,17,18,19,20)]
 
@@ -561,16 +561,62 @@ write.csv(DF, file = "DF.csv")
 
 #need to eliminate control and NA
 
-DF = finalavg
+finalfull= finalfull %>%
+  mutate_at(vars(day,
+                 patient,
+                 avg_hr,
+                 avg_rr,
+                 duration_in_rem,
+                 duration_in_light,
+                 duration_in_deep,
+                 csd,
+                 sleepmed,
+                 antidepressant,
+                 at,
+                 hr,
+                 rr,
+                 act,
+                 duration_awake,
+                 duration_sleep_onset,
+                 awakenings,
+                 sleep_score,
+                 tossnturn_count,
+                 bedexit_count,
+                 avg_act,
+                 duration_in_sleep,
+                 duration_in_bed,
+                 bedexit_duration), as.numeric)
 
-DF[ ! ( ( DF$patient == "control" ) ) ]
 
-cond2 <- DF$patient == "control"
+DF2 = finalfull
 
-DF <- DF[!cond2,]
+finalavg[ ! ( ( finalavg$patient == "control" ) ) ]
 
-View(DF)
+cond3 <- finalavg$patient == "sleepmed"
 
-DF <- subset(DF,!(is.na(DF["sleepmed"]) | is.na(DF["antidepressant"]) ) )
+c12 <- finalavg[!cond3,]
 
-finalavg = DF
+merge(c1, c12, all = TRUE)
+
+View(c12)
+
+View(DF2)
+
+
+
+#DURATION IN SLEEP IN HOURS
+
+
+for (i in visualize_pat1) {
+  #making the dataframe, removing a few columns not needed, and selecting the desired ones
+  i = select(visualize_pat1, patient, duration_in_sleep, day)
+  #removing rows only containing NA's, leaving the ones which have values
+  i = subset(i,!(is.na(i["duration_in_sleep"]) | is.na(i["day"])))
+  #making it numeric
+  i = as.data.frame(sapply(i, as.numeric))
+  #create another column with duration in hours
+  i = transform(i, hours_of_sleep = duration_in_sleep / 3600)
+  vis_pat1 = i
+}
+
+View(vis_pat1)
