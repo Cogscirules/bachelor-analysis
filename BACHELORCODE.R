@@ -2,7 +2,7 @@ library(pacman)
 p_load(stringr, rethinking, brms, dplyr, ggplot2, gridExtra, mvtnorm, rethinking, metafor, readxl, lme4, data.table, tidyverse, lubridate, groupdata2)
 
 
-#This part of the code is merely cleaning and mergin intro the resulting final DF
+#The first part of the code is merely data cleaning, based on patient 1
 
 
 # ------------------------------------ BASE CODE BASED ON 1 PATIENT AND DATASET
