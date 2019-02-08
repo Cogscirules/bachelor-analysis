@@ -882,14 +882,14 @@ WAIC(mm0, mm1, mm2, mm3, mm5, mm6, mm7, mm8, mm9, mm10, mm11, se = FALSE)
 
 mo1 <- brms::brm(sleep_score ~ 1 + avg_act + (1|day), data = finalfull, family = gaussian, chains = 2, cores = 2) 
 summary(mo1)
-pp_check(m01)
-plot(marginal_effects(m01), points = T)
+pp_check(mo1)
+plot(marginal_effects(mo1), points = T)
 
 
 mo2 <- brms::brm(sleep_score ~ 1 + duration_in_bed + (1|day), data = finalfull, family = gaussian, chains = 2, cores = 2) 
-summary(m4)
-pp_check(m4)
-plot(marginal_effects(m4), points = T)
+summary(mo2)
+pp_check(mo2)
+plot(marginal_effects(mo2), points = T)
 
 
 mo3 <- brms::brm(sleep_score ~ 1 + bedexit_duration + (1|day), data = finalfull, family = gaussian, chains = 2, cores = 2) 
@@ -899,34 +899,34 @@ plot(marginal_effects(mo3), points = T)
 
 
 mo4 <- brms::brm(sleep_score ~ 1 + day + duration_in_bed + (1|day), data = finalfull, family = gaussian, chains = 2, cores = 2) 
-summary(mo3)
-pp_check(mo3)
-plot(marginal_effects(mo3), points = T)
+summary(mo4)
+pp_check(mo4)
+plot(marginal_effects(mo4), points = T)
 
 
 mo5 <- brms::brm(sleep_score ~ 1 + day + avg_act + (1|day), data = finalfull, family = gaussian, chains = 2, cores = 2) 
-summary(mo3)
-pp_check(mo3)
-plot(marginal_effects(mo3), points = T)
+summary(mo5)
+pp_check(mo5)
+plot(marginal_effects(mo5), points = T)
 
 
 mo6 <- brms::brm(sleep_score ~ 1 + day + bedexit_duration + (1|day), data = finalfull, family = gaussian, chains = 2, cores = 2) 
-summary(mo3)
-pp_check(mo3)
-plot(marginal_effects(mo3), points = T)
+summary(mo6)
+pp_check(mo6)
+plot(marginal_effects(mo6), points = T)
 
 
 mo7 <- brms::brm(sleep_score ~ 1 + day + bedexit_duration + duration_in_bed + (1|day), data = finalfull, family = gaussian, chains = 2, cores = 2) 
-summary(mo3)
-pp_check(mo3)
-plot(marginal_effects(mo3), points = T)
+summary(mo7)
+pp_check(mo7)
+plot(marginal_effects(mo7), points = T)
 
 #Interaction
 
 mo8 <- brms::brm(sleep_score ~ 1 + bedexit_duration * duration_in_bed + (1|day), data = finalfull, family = gaussian, chains = 2, cores = 2) 
-summary(mo4)
-pp_check(mo4)
-plot(marginal_effects(mo4), points = T)
+summary(mo8)
+pp_check(mo8)
+plot(marginal_effects(mo8), points = T)
 
 
 
@@ -937,14 +937,14 @@ pp_mo9 + theme_classic()
 plot(marginal_effects(mo9), points = T) + theme_classic()
 
 mo10 <- brms::brm(sleep_score ~ 1 + tossnturn_count + (1|day), data = finalfull, family = gaussian, chains = 2, cores = 2) 
-summary(mo7)
-pp_check(mo7)
-plot(marginal_effects(mo7), points = T)
+summary(mo10)
+pp_check(mo10)
+plot(marginal_effects(mo10), points = T)
 
 mo11 <- brms::brm(sleep_score ~ 1 + tossnturn_count * duration_in_sleep + (1|day), data = finalfull, family = gaussian, chains = 2, cores = 2) 
-summary(mo8)
-pp_check(mo8)
-plot(marginal_effects(mo8), points = T)
+summary(mo11)
+pp_check(mo11)
+plot(marginal_effects(mo11), points = T)
 
 
 mo12 <- brms::brm(sleep_score ~ 1 + day + duration_in_bed * bedexit_duration + (1|day), data = finalfull, family = gaussian, chains = 2, cores = 2) 
